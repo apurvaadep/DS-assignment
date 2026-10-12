@@ -1,0 +1,260 @@
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+// Define a node to store coefficient and exponent
+struct Node {
+    int coeff, exp;
+    Node* next;
+
+    // Initialize a new node
+    Node(int c, int e) {
+        coeff = c;
+        exp = e;
+        next = NULL;
+    }
+};
+
+// Insert a term in descending order of exponent
+void insert(Node*& head, int c, int e) {
+    if (c == 0) return; // Ignore zero coefficient
+
+    Node* temp = head;
+    Node* prev = NULL;
+
+    // Find the correct position for the term
+    while (temp && temp->exp > e) {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    // Combine terms having the same exponent
+    if (temp && temp->exp == e) {
+        temp->coeff += c;
+        return;
+    }
+
+    // Create and insert a new node
+    Node* n = new Node(c, e);
+    n->next = temp;
+
+    if (prev)
+        prev->next = n;
+    else
+        head = n;
+}
+
+// Create a copy of a polynomial
+Node* copyPoly(Node* p) {
+    Node* result = NULL;
+
+    while (p) {
+        insert(result, p->coeff, p->exp);
+        p = p->next;
+    }
+
+    return result;
+}
+
+// Add two polynomials
+Node* add(Node* p1, Node* p2) {
+    Node* result = copyPoly(p1);
+
+    // Insert terms of the second polynomial
+    while (p2) {
+        insert(result, p2->coeff, p2->exp);
+        p2 = p2->next;
+    }
+
+    return result;
+}
+
+// Subtract the second polynomial from the first
+Node* subtract(Node* p1, Node* p2) {
+    Node* result = copyPoly(p1);
+
+    // Insert negative coefficients of the second polynomial
+    while (p2) {
+        insert(result, -p2->coeff, p2->exp);
+        p2 = p2->next;
+    }
+
+    return result;
+}
+
+// Multiply two polynomials
+Node* multiply(Node* p1, Node* p2) {
+    Node* result = NULL;
+
+    // Multiply every term of P1 by every term of P2
+    for (Node* a = p1; a; a = a->next) {
+        for (Node* b = p2; b; b = b->next) {
+
+            // Multiply coefficients and add exponents
+            insert(result, a->coeff * b->coeff,
+                   a->exp + b->exp);
+        }
+    }
+
+    return result;
+}
+
+// Display the polynomial
+void display(Node* p) {
+    if (!p) {
+        cout << "0";
+        return;
+    }
+
+    bool first = true;
+
+    while (p) {
+        // Print the correct sign between terms
+        if (!first && p->coeff > 0)
+            cout << " + ";
+        else if (!first && p->coeff < 0)
+            cout << " - ";
+        else if (first && p->coeff < 0)
+            cout << "-";
+
+        // Print the coefficient without its sign
+        cout << abs(p->coeff);
+
+        // Print x when the exponent is positive
+        if (p->exp > 0)
+            cout << "x";
+
+        // Print the exponent when it is greater than one
+        if (p->exp > 1)
+            cout << "^" << p->exp;
+
+        first = false;
+        p = p->next;
+    }
+}
+
+// Divide two polynomials using integer coefficients
+Node* dividePoly(Node* dividend, Node* divisor) {
+
+    // Check whether the divisor is zero
+    if (!divisor || divisor->coeff == 0) {
+        cout << "Division by zero polynomial is not allowed.\n";
+        return NULL;
+    }
+
+    Node* quotient = NULL;
+
+    // Copy the dividend to calculate the remainder
+    Node* remainder = copyPoly(dividend);
+
+    // Continue while the remainder's degree is sufficient
+    while (remainder && remainder->exp >= divisor->exp) {
+
+        // Check whether the leading coefficients divide evenly
+        if (remainder->coeff % divisor->coeff != 0) {
+            cout << "Division requires fractional coefficients.\n";
+            break;
+        }
+
+        // Calculate the next quotient term
+        int c = remainder->coeff / divisor->coeff;
+        int e = remainder->exp - divisor->exp;
+
+        // Stop if the quotient coefficient is zero
+        if (c == 0)
+            break;
+
+        Node* term = NULL;
+
+        // Create the quotient term
+        insert(term, c, e);
+        insert(quotient, c, e);
+
+        // Multiply the quotient term by the divisor
+        Node* product = multiply(term, divisor);
+
+        // Subtract the product from the remainder
+        Node* newRemainder = subtract(remainder, product);
+
+        // Remove terms whose coefficients become zero
+        Node* current = newRemainder;
+        Node* previous = NULL;
+
+        while (current) {
+            if (current->coeff == 0) {
+                Node* del = current;
+
+                if (previous)
+                    previous->next = current->next;
+                else
+                    newRemainder = current->next;
+
+                current = current->next;
+                delete del;
+            } else {
+                previous = current;
+                current = current->next;
+            }
+        }
+
+        // Prevent an infinite loop if the leading term does not change
+        if (newRemainder &&
+            newRemainder->exp >= remainder->exp &&
+            newRemainder->coeff == remainder->coeff) {
+            cout << "Division could not continue.\n";
+            return quotient;
+        }
+
+        // Update the remainder for the next iteration
+        remainder = newRemainder;
+    }
+
+    // Display the final remainder
+    cout << "Remainder: ";
+    display(remainder);
+    cout << endl;
+
+    return quotient;
+}
+
+// Main function
+int main() {
+    Node* p1 = NULL;
+    Node* p2 = NULL;
+
+    // Create P1 = 2x^2 + 4x + 2
+    insert(p1, 2, 2);
+    insert(p1, 4, 1);
+    insert(p1, 2, 0);
+
+    // Create P2 = x + 1
+    insert(p2, 1, 1);
+    insert(p2, 1, 0);
+
+    // Display the original polynomials
+    cout << "P1 = ";
+    display(p1);
+
+    cout << "\nP2 = ";
+    display(p2);
+
+    // Perform and display polynomial addition
+    cout << "\n\nAddition = ";
+    display(add(p1, p2));
+
+    // Perform and display polynomial subtraction
+    cout << "\nSubtraction = ";
+    display(subtract(p1, p2));
+
+    // Perform and display polynomial multiplication
+    cout << "\nMultiplication = ";
+    display(multiply(p1, p2));
+
+    // Perform and display polynomial division
+    cout << "\nDivision = ";
+    display(dividePoly(p1, p2));
+
+    cout << endl;
+
+    return 0; // End the program
+}
