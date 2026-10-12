@@ -1,0 +1,16 @@
+Start
+Define a node containing:
+coefficient
+exponent
+next pointer
+Create two linked lists P1 and P2 for the two polynomials.
+Insert each term of P1 and P2 in descending order of exponent.
+Compare the exponents of the current nodes of P1 and P2.
+If exponents are equal, add their coefficients and insert the result into P3.
+If exponent of P1 is greater, copy its term to P3.
+Otherwise, copy the term of P2 to P3.
+Move the corresponding pointer(s) forward.
+Repeat steps 5–9 until one list becomes empty.
+Copy all remaining terms into P3.
+Display the resultant polynomial.
+Stop
