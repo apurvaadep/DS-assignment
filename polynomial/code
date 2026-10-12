@@ -1,0 +1,94 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int coeff, exp;
+    Node* next;
+};
+
+void insert(Node*& head, int c, int e) {
+    Node* newNode = new Node{c, e, NULL};
+
+    if (head == NULL || head->exp < e) {
+        newNode->next = head;
+        head = newNode;
+        return;
+    }
+
+    Node* temp = head;
+    while (temp->next && temp->next->exp > e)
+        temp = temp->next;
+
+    if (temp->exp == e)
+        temp->coeff += c;
+    else {
+        newNode->next = temp->next;
+        temp->next = newNode;
+    }
+}
+
+Node* add(Node* p1, Node* p2) {
+    Node* result = NULL;
+
+    while (p1 && p2) {
+        if (p1->exp == p2->exp) {
+            insert(result, p1->coeff + p2->coeff, p1->exp);
+            p1 = p1->next;
+            p2 = p2->next;
+        }
+        else if (p1->exp > p2->exp) {
+            insert(result, p1->coeff, p1->exp);
+            p1 = p1->next;
+        }
+        else {
+            insert(result, p2->coeff, p2->exp);
+            p2 = p2->next;
+        }
+    }
+
+    while (p1) {
+        insert(result, p1->coeff, p1->exp);
+        p1 = p1->next;
+    }
+
+    while (p2) {
+        insert(result, p2->coeff, p2->exp);
+        p2 = p2->next;
+    }
+
+    return result;
+}
+
+void display(Node* head) {
+    while (head) {
+        cout << head->coeff << "x^" << head->exp;
+        if (head->next) cout << " + ";
+        head = head->next;
+    }
+    cout << endl;
+}
+
+int main() {
+    Node *p1 = NULL, *p2 = NULL, *sum;
+
+    insert(p1, 5, 3);
+    insert(p1, 4, 2);
+    insert(p1, 2, 0);
+
+    insert(p2, 3, 3);
+    insert(p2, 2, 2);
+    insert(p2, 6, 1);
+
+    cout << "Polynomial 1: ";
+    display(p1);
+
+    cout << "Polynomial 2: ";
+    display(p2);
+
+    sum = add(p1, p2);
+
+    cout << "Addition: ";
+    display(sum);
+
+    return 0;
+}
