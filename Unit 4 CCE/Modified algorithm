@@ -1,0 +1,22 @@
+start the program.
+Initialize the rotation counter to zero.
+Define a node structure containing data, height, left pointer, and right pointer.
+Accept the number of elements from the user.
+Initialize the root of the AVL tree to NULL.
+Read each element from the user.
+Insert the element into the tree using normal Binary Search Tree insertion.
+Update the height of each affected node.
+Calculate the balance factor using:
+Balance Factor = Height of Left Subtree − Height of Right Subtree
+Check whether the tree is unbalanced.
+If unbalanced, identify and perform the appropriate rotation:
+LL case: Perform right rotation.
+RR case: Perform left rotation.
+LR case: Perform left rotation followed by right rotation.
+RL case: Perform right rotation followed by left rotation.
+Increase the rotation counter for each individual rotation performed.
+Display the AVL tree with the height and balance factor of each node.
+Display the current rotation count after every insertion.
+Repeat steps 6–14 until all elements have been inserted.
+Display the final AVL tree and the total number of rotations.
+Stop the program.
