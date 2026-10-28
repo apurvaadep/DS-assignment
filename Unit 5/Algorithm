@@ -1,0 +1,11 @@
+Start the program.
+Accept the number of buildings and pathways.
+Initialize an adjacency matrix with all elements set to zero.
+Accept the pathways between buildings and mark the corresponding matrix entries as 1.
+Display the adjacency matrix.
+Accept two building numbers and check whether a direct pathway exists between them.
+Add a new building by increasing the number of vertices and updating the matrix.
+Remove a selected pathway by setting its corresponding matrix entries to 0.
+Calculate the degree of each building by adding the values in its corresponding row.
+Display the updated adjacency matrix and the degree of each building.
+Stop the program.
