@@ -1,0 +1,19 @@
+Start the program.
+Read the number of buildings and pathways.
+Initialize the adjacency matrix with zeros.
+Accept the pathway connections and update the matrix with 1 for each connection.
+Display a menu containing the available operations.
+If the user selects Add Building:
+Increase the number of buildings by one.
+Initialize the new row and column with zeros.
+Accept connections to existing buildings.
+Update the adjacency matrix.
+If the user selects Remove Pathway:
+Accept the two building numbers.
+Set the corresponding matrix entries to 0.
+Display the updated adjacency matrix.
+If the user selects Calculate Degree:
+Add all the values in each row of the adjacency matrix.
+Display the degree of each building.
+Repeat the menu until the user selects Exit.
+Stop the program.
